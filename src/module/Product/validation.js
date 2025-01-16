@@ -4,8 +4,8 @@ const Joi = require('joi');
 const createProductValidation = Joi.object({
     ratings: Joi.number().required(),
     isFeatured: Joi.boolean().default(false),
-    size: Joi.string().valid('none', 'small', 'medium', 'large').default('none'), // Define allowed sizes
-    weight: Joi.string().valid('none', 'kg', 'grams').default('none'),  // Validate weight options
+    size: Joi.string().default('none'),
+    weight: Joi.number().required(),
     images: Joi.array().items(Joi.string()).required(),  // Images are required
     published: Joi.boolean().default(false),
     productName: Joi.string().required(),
@@ -13,7 +13,7 @@ const createProductValidation = Joi.object({
     categoryName: Joi.string().required(),
     sub_categoryName: Joi.string().required(),
     small_categoryNames: Joi.string().required(),
-    productCode: Joi.string().required(),  // No need for uniqueness validation here
+    productCode: Joi.string().required(),
     price: Joi.number().required(),
     oldPrice: Joi.number().required(),
     productStock: Joi.number().required(),
@@ -26,8 +26,8 @@ const createProductValidation = Joi.object({
 const updateProductValidation = Joi.object({
     ratings: Joi.number().optional(),
     isFeatured: Joi.boolean().optional(),
-    size: Joi.string().valid('none', 'small', 'medium', 'large').optional().default('none'), // Define allowed sizes
-    weight: Joi.string().valid('none', 'kg', 'grams').optional().default('none'),  // Validate weight options
+    size: Joi.string().optional().default('none'),
+    weight: Joi.number().optional(),
     images: Joi.array().items(Joi.string()).required(),  // Images are required
     published: Joi.boolean().optional(),
     productName: Joi.string().optional(),

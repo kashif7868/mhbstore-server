@@ -16,9 +16,8 @@ const productSchema = new mongoose.Schema(
       default: "none",
     },
     weight: {
-      type: String,
-      default: "none",
-      enum: ["none", "kg", "grams"],
+      type: Number,
+      required: true,
     },
     images: [
       {
@@ -76,10 +75,9 @@ const productSchema = new mongoose.Schema(
       default: Date.now,
     },
     discount: {
+      // Discount field to store percentage discount
       type: Number,
       default: 0,
-      min: [0, 'Discount cannot be negative'],
-      max: [100, 'Discount cannot be more than 100%'],
     },
   },
   { timestamps: true }
