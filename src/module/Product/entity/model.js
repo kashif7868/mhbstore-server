@@ -5,7 +5,7 @@ const productSchema = new mongoose.Schema(
   {
     ratings: {
       type: Number,
-      required: true,
+      default: 0,
     },
     isFeatured: {
       type: Boolean,
@@ -17,7 +17,7 @@ const productSchema = new mongoose.Schema(
     },
     weight: {
       type: Number,
-      required: true,
+      default: 0,
     },
     images: [
       {
