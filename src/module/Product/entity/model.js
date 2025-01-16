@@ -1,13 +1,11 @@
 const mongoose = require("mongoose");
 
-// Define the product schema
+// Product Schema
 const productSchema = new mongoose.Schema(
   {
     ratings: {
       type: Number,
-      required: [true, 'Ratings are required'],
-      min: [0, 'Ratings cannot be negative'],
-      max: [5, 'Ratings cannot be more than 5'],
+      required: true,
     },
     isFeatured: {
       type: Boolean,
@@ -20,63 +18,54 @@ const productSchema = new mongoose.Schema(
     weight: {
       type: String,
       default: "none",
-      enum: ["none", "KG", "Grams"],
+      enum: ["none", "kg", "grams"],
     },
     images: [
       {
         type: String,
-        required: [true, 'At least one image is required'],
+        required: true,
       },
-    ],
+    ], // Images are required
     published: {
       type: Boolean,
       default: false,
     },
     productName: {
       type: String,
-      required: [true, 'Product name is required'],
-      trim: true,
+      required: true,
     },
     description: {
       type: String,
-      required: [true, 'Product description is required'],
-      trim: true,
+      required: true,
     },
     categoryName: {
       type: String,
-      required: [true, 'Category name is required'],
-      trim: true,
+      required: true,
     },
     sub_categoryName: {
       type: String,
-      required: [true, 'Sub-category name is required'],
-      trim: true,
+      required: true,
     },
     small_categoryNames: {
       type: String,
-      required: [true, 'Small category names are required'],
-      trim: true,
+      required: true,
     },
     productCode: {
       type: String,
-      required: [true, 'Product code is required'],
+      required: true,
       unique: true,
-      trim: true,
     },
     price: {
       type: Number,
-      required: [true, 'Price is required'],
-      min: [0, 'Price cannot be negative'],
+      required: true,
     },
     oldPrice: {
       type: Number,
-      required: [true, 'Old price is required'],
-      min: [0, 'Old price cannot be negative'],
+      required: true,
     },
     productStock: {
       type: Number,
-      required: [true, 'Product stock is required'],
-      min: [0, 'Stock cannot be negative'],
+      required: true,
     },
     brand: {
       type: String,
@@ -94,7 +83,7 @@ const productSchema = new mongoose.Schema(
     },
   },
   { timestamps: true }
-);
+); // Automatically adds createdAt and updatedAt fields
 
 // Virtual field to calculate the discounted price
 productSchema.virtual("discountedPrice").get(function () {
