@@ -6,7 +6,7 @@ dotenv.config({ path: path.join(__dirname, '../../.env') });
 
 const envVarsSchema = Joi.object()
   .keys({
-    NODE_ENV: Joi.string().valid('production', 'development', 'test').required(),
+    NODE_ENV: Joi.string().valid('production', 'development', 'Mhbstore').required(),
     ROOT_PATH: Joi.string(),
     PORT: Joi.number().default(3000),
     MONGODB_URL: Joi.string().required().description('Mongo DB url'),
@@ -33,7 +33,8 @@ module.exports = {
   rootPath: envVars.ROOT_PATH,
   port: envVars.PORT,
   mongoose: {
-    url: envVars.MONGODB_URL + (envVars.NODE_ENV === 'test' ? '-test' : ''),
+    // Append /Mhbstore to the URL, ensuring that the database is always "Mhbstore"
+    url: envVars.MONGODB_URL + '/Mhbstore',
     options: {
       useCreateIndex: true,
       useNewUrlParser: true,
