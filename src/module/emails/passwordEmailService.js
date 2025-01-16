@@ -6,16 +6,16 @@ const resetPasswordSuccessTemplate = require('./resetPasswordSuccessTemplate');
 const transporter = nodemailer.createTransport({
   service: 'gmail', // Use Gmail SMTP or configure another service like SendGrid
   auth: {
-    user: process.env.EMAIL_USER,  // Your email address (e.g., yourname@gmail.com)
-    pass: process.env.EMAIL_PASS,  // Your email password or an app-specific password
+    user: 'infokashifali786@gmail.com',  // Your email address
+    pass: 'cuzvsgeevkwsltcz',  // Your email password or an app-specific password
   },
 });
 
 // Send the reset password email with the HTML template
 const sendForgotPasswordEmail = async (email, resetPasswordToken) => {
-  const resetPasswordUrl = `${process.env.BASE_URL}/reset-password?token=${resetPasswordToken}`;
+  const resetPasswordUrl = `https://www.mhbstore.com/reset-password?token=${resetPasswordToken}`;
   const mailOptions = {
-    from: process.env.EMAIL_USER,
+    from: 'infokashifali786@gmail.com',
     to: email,
     subject: 'Password Reset Request',
     html: resetPasswordTemplate(resetPasswordToken),  // Use the HTML template
@@ -33,7 +33,7 @@ const sendForgotPasswordEmail = async (email, resetPasswordToken) => {
 // Send the reset password confirmation email with the success template
 const sendResetPasswordConfirmationEmail = async (email) => {
   const mailOptions = {
-    from: process.env.EMAIL_USER,
+    from: 'infokashifali786@gmail.com',
     to: email,
     subject: 'Password Reset Successfully',
     html: resetPasswordSuccessTemplate(),  // Use the success HTML template

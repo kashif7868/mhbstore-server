@@ -197,7 +197,7 @@ const generateOrderConfirmationHTML = (order, attachments) => {
           <p class="total-row"><strong>Grand Total:</strong> ${order.grandTotal.toFixed(2)}</p>
 
           <div class="button-container">
-            <a href="${process.env.BASE_URL}/order-details/${order.orderId}" class="confirmation-button">View Order Details</a>
+            <a href="https://www.mhbstore.com/order-details/${order.orderId}" class="confirmation-button">View Order Details</a>
           </div>
 
           <div class="footer">
@@ -236,7 +236,7 @@ const generateOrderConfirmationText = (order) => {
     © 2024 Mhb Store. All Rights Reserved.
     Visit Our Store: https://www.mhbstore.com
 
-    View Order Details: ${process.env.BASE_URL}/order-details/${order.orderId}
+    View Order Details: https://www.mhbstore.com/order-details/${order.orderId}
   `;
 };
 

@@ -62,9 +62,7 @@ app.options("*", cors());
 app.use(passport.initialize());
 passport.use("jwt", jwtStrategy);
 
-// Google authentication routes
-const googleAuth = require('../config/googleAuth'); // Require the googleAuth.js file that contains Passport.js Google strategy
-app.use(passport.initialize()); // Initialize passport
+
 
 // limit repeated failed requests to auth endpoints
 if (config.env === "production") {

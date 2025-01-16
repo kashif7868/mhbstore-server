@@ -1,4 +1,3 @@
-// resetPasswordTemplate.js
 const resetPasswordTemplate = (resetPasswordToken) => {
   return `
     <!DOCTYPE html>
@@ -51,7 +50,7 @@ const resetPasswordTemplate = (resetPasswordToken) => {
         </div>
         <p>Hello,</p>
         <p>You requested a password reset. Please click the button below to reset your password.</p>
-        <a href="${process.env.BASE_URL}/reset-password?token=${resetPasswordToken}" class="button">Reset Password</a>
+        <a href="https://www.mhbstore.com/reset-password?token=${resetPasswordToken}" class="button">Reset Password</a>
         <p>If you did not request a password reset, please ignore this email.</p>
         <div class="footer">
           <p>&copy; ${new Date().getFullYear()} Your Company Name. All rights reserved.</p>

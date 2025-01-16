@@ -13,12 +13,12 @@ const envVarsSchema = Joi.object()
     JWT_SECRET: Joi.string().required().description('JWT secret key'),
     JWT_ACCESS_EXPIRATION_MINUTES: Joi.number().default(90).description('minutes after which access tokens expire'),
     JWT_REFRESH_EXPIRATION_DAYS: Joi.number().default(30).description('days after which refresh tokens expire'),
-    GOOGLE_CLIENT_ID: Joi.string().required().description('Google OAuth client ID'),
-    GOOGLE_CLIENT_SECRET: Joi.string().required().description('Google OAuth client secret'),
-    GOOGLE_REDIRECT_URI: Joi.string().required().description('Google OAuth redirect URI'),
-    FACEBOOK_CLIENT_ID: Joi.string().required().description('Facebook App ID'),
-    FACEBOOK_CLIENT_SECRET: Joi.string().required().description('Facebook App Secret'),
-    FACEBOOK_CALLBACK_URL: Joi.string().required().description('Facebook OAuth callback URL'),
+    // GOOGLE_CLIENT_ID: Joi.string().required().description('Google OAuth client ID'),
+    // GOOGLE_CLIENT_SECRET: Joi.string().required().description('Google OAuth client secret'),
+    // GOOGLE_REDIRECT_URI: Joi.string().required().description('Google OAuth redirect URI'),
+    // FACEBOOK_CLIENT_ID: Joi.string().required().description('Facebook App ID'),
+    // FACEBOOK_CLIENT_SECRET: Joi.string().required().description('Facebook App Secret'),
+    // FACEBOOK_CALLBACK_URL: Joi.string().required().description('Facebook OAuth callback URL'),
   })
   .unknown();
 
@@ -47,14 +47,14 @@ module.exports = {
     refreshExpirationDays: envVars.JWT_REFRESH_EXPIRATION_DAYS,
     resetPasswordExpirationMinutes: 10,
   },
-  google: {
-    clientId: envVars.GOOGLE_CLIENT_ID,
-    clientSecret: envVars.GOOGLE_CLIENT_SECRET,
-    redirectUri: envVars.GOOGLE_REDIRECT_URI,
-  },
-  facebook: {
-    clientId: envVars.FACEBOOK_CLIENT_ID,
-    clientSecret: envVars.FACEBOOK_CLIENT_SECRET,
-    callbackUrl: envVars.FACEBOOK_CALLBACK_URL,
-  },
+  // google: {
+  //   clientId: envVars.GOOGLE_CLIENT_ID,
+  //   clientSecret: envVars.GOOGLE_CLIENT_SECRET,
+  //   redirectUri: envVars.GOOGLE_REDIRECT_URI,
+  // },
+  // facebook: {
+  //   clientId: envVars.FACEBOOK_CLIENT_ID,
+  //   clientSecret: envVars.FACEBOOK_CLIENT_SECRET,
+  //   callbackUrl: envVars.FACEBOOK_CALLBACK_URL,
+  // },
 };
