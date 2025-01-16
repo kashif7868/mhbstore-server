@@ -13,15 +13,7 @@ const productSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
-    colors: {
-      type: String,
-      default: "none",
-    },
     size: {
-      type: String,
-      default: "none",
-    },
-    kidsSize: {
       type: String,
       default: "none",
     },
@@ -55,12 +47,12 @@ const productSchema = new mongoose.Schema(
       required: [true, 'Category name is required'],
       trim: true,
     },
-    subCategoryName: {
+    sub_categoryName: {
       type: String,
       required: [true, 'Sub-category name is required'],
       trim: true,
     },
-    smallCategoryNames: {
+    small_categoryNames: {
       type: String,
       required: [true, 'Small category names are required'],
       trim: true,
