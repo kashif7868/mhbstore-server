@@ -4,7 +4,6 @@ const { toJSON, paginate } = require("../../utils/plugins");
 const categorySchema = new mongoose.Schema(
   {
     categoryName: { type: String, required: true },
-    backgroundColor: { type: String, required: true },
     status: { 
       type: String, 
       enum: ['published', 'unpublished'], // Only allows 'published' or 'unpublished'
