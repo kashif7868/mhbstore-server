@@ -6,9 +6,9 @@ const categorySchema = new mongoose.Schema(
     categoryName: { type: String, required: true },
     status: { 
       type: String, 
-      enum: ['published', 'unpublished'], // Only allows 'published' or 'unpublished'
+      enum: ['published', 'unpublished', 'live', 'hide'], // Added 'live' and 'hide'
       required: true, 
-      default: 'unpublished'  // Default status is 'unpublished'
+      default: 'published'  // Default status is 'published'
     },
     image: { type: String, required: false }, // Optional image field
   },
