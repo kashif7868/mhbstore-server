@@ -1,14 +1,17 @@
+const { fileUpload, uploadToFTP } = require("../../utils/fileUpload");
 const SliderImage = require("./entity/model"); // Import the SliderImage model
-const path = require("path");
 
 // Create a new slider image (post a new slider image)
 const createSliderImage = async (req, res) => {
   try {
     const { altText } = req.body;
-    const { filename } = req.file;
+    const { file } = req;
+
+    // Upload file to FTP and get the public URL
+    const imageUrl = await uploadToFTP(file);
 
     const newSliderImage = new SliderImage({
-      image: path.join("uploads", filename),
+      image: imageUrl, // Use the cloud URL for the image
       altText,
     });
 
@@ -60,7 +63,9 @@ const updateSliderImage = async (req, res) => {
     const updateData = {};
 
     if (req.file) {
-      updateData.image = path.join("uploads", req.file.filename);
+      // Upload the new image to FTP and get the URL
+      const imageUrl = await uploadToFTP(req.file);
+      updateData.image = imageUrl; // Set the new image URL
     }
 
     if (altText) {

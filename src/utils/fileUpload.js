@@ -1,56 +1,77 @@
 const multer = require('multer');
+const ftp = require('basic-ftp');
 const path = require('path');
-const fs = require('fs');
+const stream = require('stream'); // Import stream module
 
-// Define Persistent Disk path (for Render or similar services)
-const UPLOAD_DIR = process.env.UPLOAD_DIR || 'src/uploads/';
+// Multer Storage Configuration (no local storage)
+const storage = multer.memoryStorage(); // Store files in memory (instead of a local folder)
 
-// Ensure the upload directory exists
-if (!fs.existsSync(UPLOAD_DIR)) {
-  fs.mkdirSync(UPLOAD_DIR, { recursive: true });
-}
-
-// Multer storage configuration
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, UPLOAD_DIR); // Destination for uploaded files
-  },
-  filename: (req, file, cb) => {
-    // Save file with original extension
-    cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname));
-  },
-});
-
-// Image file filter for validation (accepts image and video formats)
+// File filter for image and video files
 const imageFilter = (req, file, cb) => {
-  // Validate file extensions (only image and video formats allowed)
-  if (!file.originalname.match(/\.(jpg|jpeg|png|gif|mp4)$/i)) {
-    req.fileValidationError = 'Only image and video files are allowed!';
-    return cb(new Error('Only image and video files are allowed!'), false);
+  if (!file.originalname.match(/\.(jpg|JPG|jpeg|JPEG|png|PNG|gif|GIF|mp4)$/)) {
+    req.fileValidationError = 'Only image or video files are allowed!';
+    return cb(new Error('Only image or video files are allowed!'), false);
   }
   cb(null, true); // Accept the file
 };
 
-// Define the multer upload middleware (supports multiple file uploads)
+// Multer setup
 const fileUpload = multer({
-  storage,
-  fileFilter: imageFilter, // Add file filter for validation
-  limits: { fileSize: 10 * 1024 * 1024 }, // Optional: Limit the file size to 10MB (adjust as needed)
+  storage: storage, // Use memory storage
+  fileFilter: imageFilter, // File validation
+  limits: { fileSize: 10 * 1024 * 1024 }, // Limit file size to 10MB
 });
 
-// Middleware to handle upload errors
-const handleUploadError = (err, req, res, next) => {
-  if (err instanceof multer.MulterError) {
-    // A Multer error occurred
-    return res.status(400).json({ error: err.message });
-  } else if (err) {
-    // An unknown error occurred
-    return res.status(500).json({ error: err.message });
-  }
-  next();
+// FTP Configuration details
+const ftpConfig = {
+  host: 'ftp.mhbstore.com', // FTP server ka address
+  user: 'u618811403.mhbstore', // FTP username
+  password: 'Mhbstore@786$', // FTP password
+  secure: true, // Yeh ensure karta hai ke FTP connection secure ho
+  secureOptions: {
+    rejectUnauthorized: false, // Agar self-signed certificate use ho raha ho toh isko false rakhna
+  },
 };
 
+// FTP Client Setup
+const client = new ftp.Client();
+client.ftp.verbose = true; // Enable FTP debug mode (optional)
+
+// Function to upload the file to FTP server
+const uploadToFTP = async (file) => {
+  try {
+    // Secure connection to FTP server
+    await client.access(ftpConfig); 
+    
+    // Ensure the target directory exists
+    await client.ensureDir('images/'); 
+    
+    // Convert buffer to readable stream
+    const bufferStream = new stream.PassThrough();
+    bufferStream.end(file.buffer);
+
+    // Upload the file from the readable stream
+    await client.uploadFrom(bufferStream, file.originalname);
+
+    const imageUrl = `https://www.mhbstore.com/images/${file.originalname}`;
+    return imageUrl;
+
+  } catch (err) {
+    console.error("FTP upload mein error:", err.message);
+
+    // Handle FTP login errors
+    if (err.message.includes("530 Login incorrect")) {
+      console.log("Login incorrect, please check credentials.");
+    }
+
+    throw new Error('FTP server pe file upload mein error: ' + err.message);
+  } finally {
+    client.close(); // Close FTP session after upload
+  }
+};
+
+// Export multer upload middleware and FTP upload function
 module.exports = {
   fileUpload,
-  handleUploadError,
+  uploadToFTP,
 };
