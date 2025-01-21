@@ -51,24 +51,20 @@ const uploadToFTP = async (file) => {
     bufferStream.end(file.buffer);
 
     // Upload the file from the readable stream
-    await client.uploadFrom(bufferStream, file.originalname);
+    await client.uploadFrom(bufferStream, file.originalname); // Ensure the upload happens before moving to the next task
 
     const imageUrl = `https://www.mhbstore.com/images/${file.originalname}`;
     return imageUrl;
 
   } catch (err) {
-    console.error("FTP upload mein error:", err.message);
-
-    // Handle FTP login errors
-    if (err.message.includes("530 Login incorrect")) {
-      console.log("Login incorrect, please check credentials.");
-    }
-
-    throw new Error('FTP server pe file upload mein error: ' + err.message);
+    console.error("FTP upload error:", err.message);
+    throw new Error('FTP server file upload error: ' + err.message);
   } finally {
-    client.close(); // Close FTP session after upload
+    // Close FTP session only after all tasks are complete
+    client.close(); 
   }
 };
+
 
 // Export multer upload middleware and FTP upload function
 module.exports = {
