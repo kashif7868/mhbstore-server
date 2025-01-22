@@ -1,70 +1,73 @@
-const express = require("express");
-const multer = require("multer");
-const ftp = require("basic-ftp");
-const path = require("path");
+// const multer = require('multer');
+// const ftp = require('basic-ftp');
+// const path = require('path');
+// const stream = require('stream'); // Import stream module
 
-const app = express();
-const client = new ftp.Client();
-client.ftp.verbose = true; // Optional: Enable debugging for FTP
+// // Multer Storage Configuration (no local storage)
+// const storage = multer.memoryStorage(); // Store files in memory (instead of a local folder)
 
-// Multer Configuration: Set storage engine and destination folder
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    // Path where the file will be stored temporarily before FTP upload
-    cb(null, 'src/uploads/'); // Local folder where multer stores files temporarily
-  },
-  filename: (req, file, cb) => {
-    // Generate unique filename using timestamp
-    cb(null, Date.now() + path.extname(file.originalname));
-  }
-});
+// // File filter for image and video files
+// const imageFilter = (req, file, cb) => {
+//   if (!file.originalname.match(/\.(jpg|JPG|jpeg|JPEG|png|PNG|gif|GIF|mp4)$/)) {
+//     req.fileValidationError = 'Only image or video files are allowed!';
+//     return cb(new Error('Only image or video files are allowed!'), false);
+//   }
+//   cb(null, true); // Accept the file
+// };
 
-const upload = multer({ storage: storage });
+// // Multer setup
+// const fileUpload = multer({
+//   storage: storage, // Use memory storage
+//   fileFilter: imageFilter, // File validation
+//   limits: { fileSize: 10 * 1024 * 1024 }, // Limit file size to 10MB
+// });
 
-// FTP Configuration details
-const ftpConfig = {
-  host: "ftp.mhbstore.com",  // FTP server address
-  user: "u618811403",  // FTP username
-  password: "Mhbstore@786$", // FTP password
-  secure: true,  // Use secure FTP if supported
-};
+// // FTP Configuration details
+// const ftpConfig = {
+//   host: 'ftp.mhbstore.com', // FTP server ka address
+//   user: 'u618811403.mhbstore', // FTP username
+//   password: 'Mhbstore@786$', // FTP password
+//   secure: true, // Yeh ensure karta hai ke FTP connection secure ho
+//   secureOptions: {
+//     rejectUnauthorized: false, // Agar self-signed certificate use ho raha ho toh isko false rakhna
+//   },
+// };
 
-// Function to upload image to FTP server and return the URL
-const fileUpload = async (file) => {
-  try {
-    await client.access(ftpConfig); // Connect to FTP server
-    await client.ensureDir("/public_html/images/");  // Ensure the 'images' directory exists on Hostinger
-    await client.uploadFrom(file.path, file.filename);  // Upload file to FTP server
+// // FTP Client Setup
+// const client = new ftp.Client();
+// client.ftp.verbose = true; // Enable FTP debug mode (optional)
 
-    // Construct the image URL based on your domain
-    const imageUrl = `https://www.mhbstore.com/images/${file.filename}`;
-    console.log("Image uploaded successfully! URL: ", imageUrl);
-    return imageUrl;  // Return the full image URL
-  } catch (err) {
-    console.error("Error uploading image:", err);
-    throw err;  // Throw error if upload fails
-  } finally {
-    client.close();  // Close FTP session after upload
-  }
-};
+// // Function to upload the file to FTP server
+// const uploadToFTP = async (file) => {
+//   try {
+//     // Secure connection to FTP server
+//     await client.access(ftpConfig); 
+    
+//     // Ensure the target directory exists
+//     await client.ensureDir('images/'); 
+    
+//     // Convert buffer to readable stream
+//     const bufferStream = new stream.PassThrough();
+//     bufferStream.end(file.buffer);
 
-// Endpoint to handle image upload
-app.post('/upload', upload.single('image'), async (req, res) => {
-  try {
-    const file = req.file;  // File uploaded using 'image' field name
-    if (!file) {
-      return res.status(400).send('No file uploaded.');
-    }
+//     // Upload the file from the readable stream
+//     await client.uploadFrom(bufferStream, file.originalname); // Ensure the upload happens before moving to the next task
 
-    // Upload file to FTP and get URL
-    const imageUrl = await fileUpload(file);
-    res.status(200).send({ message: 'File uploaded successfully', imageUrl });
-  } catch (error) {
-    res.status(500).send('Error uploading file: ' + error.message);
-  }
-});
+//     const imageUrl = `https://www.mhbstore.com/images/${file.originalname}`;
+//     return imageUrl;
 
-// Start the Express server
-app.listen(3000, () => {
-  console.log('Server is running on port 3000');
-});
+//   } catch (err) {
+//     console.error("FTP upload error:", err.message);
+//     throw new Error('FTP server file upload error: ' + err.message);
+//   } finally {
+//     // Close FTP session only after all tasks are complete
+//     client.close(); 
+//   }
+// };
+
+
+// // Export multer upload middleware and FTP upload function
+// module.exports = {
+//   fileUpload,
+//   uploadToFTP,
+// };

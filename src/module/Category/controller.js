@@ -1,7 +1,7 @@
-const path = require('path');
+// controllers/categoryController.js
+const path = require('path'); // Import path module
 const catchAsync = require('../../utils/catchAsync');
 const categoryService = require('./service');
-const { uploadToFTP } = require('../../utils/fileUpload');  // Import the FTP upload function
 
 const createCategory = catchAsync(async (req, res) => {
   const categoryData = req.body;
@@ -10,16 +10,8 @@ const createCategory = catchAsync(async (req, res) => {
   delete categoryData._id;
 
   if (req.file) {
-    try {
-      // Upload file to FTP server
-      const fileUrl = await uploadToFTP(req.file);
-      categoryData.image = fileUrl; // Set the image URL from FTP
-    } catch (err) {
-      return res.status(500).json({
-        success: false,
-        message: `File upload failed: ${err.message}`,
-      });
-    }
+    // Construct file path using path.join
+    categoryData.image = path.join('uploads', req.file.filename); 
   }
 
   const newCategory = await categoryService.createCategory(categoryData);
@@ -32,21 +24,13 @@ const createCategory = catchAsync(async (req, res) => {
 const updateCategory = catchAsync(async (req, res) => {
   const { categoryId } = req.params;
   const categoryData = req.body;
-
+  
   // Check if image file is uploaded and update
   if (req.file) {
-    try {
-      // Upload file to FTP server
-      const fileUrl = await uploadToFTP(req.file);
-      categoryData.image = fileUrl; // Set the image URL from FTP
-    } catch (err) {
-      return res.status(500).json({
-        success: false,
-        message: `File upload failed: ${err.message}`,
-      });
-    }
+    // Construct file path using path.join
+    categoryData.image = path.join('uploads', req.file.filename);
   }
-
+  
   // Ensure the category status is updated accordingly
   if (categoryData.status && !['published', 'unpublished'].includes(categoryData.status)) {
     return res.status(400).json({

@@ -195,6 +195,7 @@ const resetPassword = async (resetPasswordToken, newPassword) => {
     throw new ApiError(httpStatus.BAD_REQUEST, "Invalid or expired token");
   }
 };
+
 module.exports = {
   register,
   loginUserWithEmailAndPassword,

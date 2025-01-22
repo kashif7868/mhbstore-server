@@ -18,6 +18,38 @@ router
 router.route("/login").post(validate(validation.login), controller.login);
 router.route("/logout").post(validate(validation.logout), controller.logout);
 
+// Google OAuth Login route - Change this to GET
+router.get(
+  "/google",
+  passport.authenticate("google", { scope: ["profile", "email"] })
+);
+
+// Google OAuth callback route
+router.get(
+  "/google/callback",
+  passport.authenticate("google", { failureRedirect: "/login" }),
+  (req, res) => {
+    // Handle successful login
+    res.redirect("/"); // Redirect after successful login
+  }
+);
+
+// Facebook OAuth Login route - Change this to GET
+router.get(
+  "/facebook",
+  passport.authenticate("facebook", { scope: ["email"] })
+);
+
+// Facebook OAuth callback route
+router.get(
+  "/facebook/callback",
+  passport.authenticate("facebook", { failureRedirect: "/login" }),
+  (req, res) => {
+    // Handle successful login
+    res.redirect("/"); // Redirect after successful login
+  }
+);
+
 // User CRUD operations
 router
   .route("/users/:id")
@@ -38,7 +70,6 @@ router
 router
   .route("/reset-password")
   .post(validate(validation.resetPassword), controller.resetPassword);
-
 
 module.exports = {
   authRoutes: router,

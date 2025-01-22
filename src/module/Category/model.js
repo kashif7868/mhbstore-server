@@ -4,11 +4,12 @@ const { toJSON, paginate } = require("../../utils/plugins");
 const categorySchema = new mongoose.Schema(
   {
     categoryName: { type: String, required: true },
+    backgroundColor: { type: String, required: true },
     status: { 
       type: String, 
-      enum: ['published', 'unpublished', 'live', 'hide'], // Added 'live' and 'hide'
+      enum: ['published', 'unpublished'], // Only allows 'published' or 'unpublished'
       required: true, 
-      default: 'published'  // Default status is 'published'
+      default: 'unpublished'  // Default status is 'unpublished'
     },
     image: { type: String, required: false }, // Optional image field
   },

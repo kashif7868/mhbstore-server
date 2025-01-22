@@ -68,7 +68,7 @@ if (config.env === "production") {
 }
 
 // Use public_html/images/ to serve files
-app.use(express.static("/images"));
+app.use(express.static("src"));
 
 app.use(logRequest);
 
