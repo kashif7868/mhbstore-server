@@ -62,12 +62,15 @@ app.options("*", cors());
 app.use(passport.initialize());
 passport.use("jwt", jwtStrategy);
 
+
+
 // limit repeated failed requests to auth endpoints
 if (config.env === "production") {
   app.use("/api/auth", authLimiter);
 }
 
-// Use public_html/images/ to serve files
+// use public folder to serve files
+// app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.static("src"));
 
 app.use(logRequest);
@@ -125,4 +128,3 @@ app.use(express.json());
 app.use(errorHandler);
 
 module.exports = app;
-

@@ -17,7 +17,7 @@ const sendOrderConfirmationEmail = async (order) => {
     console.log('Processing attachment for item:', item.productName);
     return {
       filename: item.images[0],  // Image filename
-      path: `https://mhbstore-server.onrender.com/${item.images[0]}`, // Image path
+      path: `http://localhost:8000/${item.images[0]}`, // Image path
       cid: `productImage${index}`,  // Unique CID for each image
     };
   });
