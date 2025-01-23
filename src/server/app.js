@@ -77,7 +77,7 @@ app.use(logRequest);
 
 // define routes here
 app.get("/", (req, res) => {
-  res.send("Welcome to the API!");
+  res.send("******MHBSTORE API*******");
 });
 
 // Authentication Routes
