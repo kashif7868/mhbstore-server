@@ -13,21 +13,16 @@ const storage = multer.diskStorage({
   },
 });
 
-// Image file filter for validation (accepts image and video formats)
-const imageFilter = (req, file, cb) => {
-  // Validate file extensions (only image and video formats allowed)
-  if (!file.originalname.match(/\.(jpg|JPG|jpeg|JPEG|png|PNG|gif|GIF|mp4)$/)) {
-    req.fileValidationError = 'Only image files are allowed!';
-    return cb(new Error('Only image files are allowed!'), false);
-  }
-  cb(null, true); // Accept the file
+// File filter to accept all file types (no validation)
+const fileFilter = (req, file, cb) => {
+  cb(null, true); // Accept all files
 };
 
-// Define the multer upload middleware (supports multiple file uploads)
+// Define the multer upload middleware (no size limit and no file type restriction)
 const fileUpload = multer({ 
   storage,
-  fileFilter: imageFilter, // Add file filter for validation
-  limits: { fileSize: 10 * 1024 * 1024 }, // Optional: Limit the file size to 10MB (adjust as needed)
+  fileFilter, // No file type validation
+  limits: { fileSize: Infinity }, // No file size limit
 });
 
 module.exports = {
