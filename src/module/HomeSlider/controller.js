@@ -1,114 +1,107 @@
-const SliderImage = require("./entity/model"); // Import the SliderImage model
 const path = require("path");
+const BannerImageService = require("./service"); // Import the BannerImage service
 
-// Create a new slider image (post a new slider image)
-const createSliderImage = async (req, res) => {
+// Create a new banner
+const createBanner = async (req, res) => {
   try {
-    const { altText } = req.body;
-    const { filename } = req.file;
+    const { status } = req.body; // We no longer need title or categoryName
+    const images = req.files.map(file => path.join("uploads", file.filename)); // Process the uploaded files
 
-    const newSliderImage = new SliderImage({
-      image: path.join("uploads", filename),
-      altText,
-    });
+    const bannerData = { status, images }; // Simplified banner data
 
-    await newSliderImage.save();
-    res.status(201).json({
-      message: "Slider image created successfully",
-      data: newSliderImage,
+    const newBanner = await BannerImageService.createBanner(bannerData);
+
+    return res.status(201).json({
+      message: "Banner created successfully",
+      banner: newBanner,
     });
-  } catch (error) {
-    res.status(500).json({ message: "Error creating slider image", error });
+  } catch (err) {
+    return res.status(500).json({
+      message: "Error creating banner",
+      error: err.message,
+    });
   }
 };
 
-// Get all slider images
-const getAllSliderImages = async (req, res) => {
+// Update an existing banner by ID
+const updateBanner = async (req, res) => {
   try {
-    const sliderImages = await SliderImage.find();
-    res.status(200).json({
-      message: "Slider images retrieved successfully",
-      data: sliderImages,
+    const { bannerId } = req.params;
+    const { status } = req.body; // We no longer need title or categoryName
+
+    // Handle image update if new files are provided
+    let images = [];
+    if (req.files) {
+      images = req.files.map(file => path.join("uploads", file.filename)); // Update images with new uploads
+    }
+
+    const updateData = { status, images }; // Simplified update data
+
+    const updatedBanner = await BannerImageService.updateBanner(bannerId, updateData);
+
+    return res.status(200).json({
+      message: "Banner updated successfully",
+      banner: updatedBanner,
     });
-  } catch (error) {
-    res.status(500).json({ message: "Error fetching slider images", error });
+  } catch (err) {
+    return res.status(500).json({
+      message: "Error updating banner",
+      error: err.message,
+    });
   }
 };
 
-// Get a single slider image by ID
-const getSliderImageById = async (req, res) => {
+// Get all banners
+const getAllBanner = async (req, res) => {
   try {
-    const { sliderId } = req.params;
-    const sliderImage = await SliderImage.findById(sliderId);
-    if (!sliderImage) {
-      return res.status(404).json({ message: "Slider image not found" });
-    }
-    res.status(200).json({
-      message: "Slider image fetched successfully",
-      data: sliderImage,
+    const banners = await BannerImageService.getAllBanners();
+    return res.status(200).json({
+      banners,
     });
-  } catch (error) {
-    res.status(500).json({ message: "Error fetching slider image", error });
+  } catch (err) {
+    return res.status(500).json({
+      message: "Error fetching banners",
+      error: err.message,
+    });
   }
 };
 
-// Update an existing slider image
-const updateSliderImage = async (req, res) => {
+// Get a single banner by ID
+const getBannerById = async (req, res) => {
   try {
-    const { sliderId } = req.params;
-    const { altText } = req.body;
-    const updateData = {};
-
-    if (req.file) {
-      updateData.image = path.join("uploads", req.file.filename);
-    }
-
-    if (altText) {
-      updateData.altText = altText;
-    }
-
-    const updatedSliderImage = await SliderImage.findByIdAndUpdate(
-      sliderId,
-      updateData,
-      { new: true }
-    );
-
-    if (!updatedSliderImage) {
-      return res.status(404).json({ message: "Slider image not found" });
-    }
-
-    res.status(200).json({
-      message: "Slider image updated successfully",
-      data: updatedSliderImage,
+    const { bannerId } = req.params;
+    const banner = await BannerImageService.getBannerById(bannerId);
+    return res.status(200).json({
+      banner,
     });
-  } catch (error) {
-    res.status(500).json({ message: "Error updating slider image", error });
+  } catch (err) {
+    return res.status(500).json({
+      message: "Error fetching banner",
+      error: err.message,
+    });
   }
 };
 
-// Delete a slider image by ID
-const deleteSliderImage = async (req, res) => {
+// Delete a banner by ID
+const deleteBanner = async (req, res) => {
   try {
-    const { sliderId } = req.params;
-    const deletedSliderImage = await SliderImage.findByIdAndDelete(sliderId);
-
-    if (!deletedSliderImage) {
-      return res.status(404).json({ message: "Slider image not found" });
-    }
-
-    res.status(200).json({
-      message: "Slider image deleted successfully",
-      data: deletedSliderImage,
+    const { bannerId } = req.params;
+    await BannerImageService.deleteBanner(bannerId);
+    return res.status(200).json({
+      message: "Banner deleted successfully",
     });
-  } catch (error) {
-    res.status(500).json({ message: "Error deleting slider image", error });
+  } catch (err) {
+    return res.status(500).json({
+      message: "Error deleting banner",
+      error: err.message,
+    });
   }
 };
 
 module.exports = {
-  createSliderImage,
-  getAllSliderImages,
-  getSliderImageById,
-  updateSliderImage,
-  deleteSliderImage,
+  createBanner,
+  updateBanner,
+  getAllBanner,
+  getBannerById,
+  deleteBanner,
 };

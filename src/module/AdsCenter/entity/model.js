@@ -1,24 +1,40 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
-const adsSchema = new mongoose.Schema({
-  image: { type: String, required: true },
-  link: { type: String, required: true },
-  status: { type: String, enum: ['Active', 'Inactive'], default: 'Active' },
-  startDate: { type: Date, required: true },
-  endDate: { type: Date, required: true },
-  isActive: { type: Boolean, default: true },
-  createdAt: { type: Date, default: Date.now },
+const adsImageSchema = new mongoose.Schema({
+  categoryName: { type: String, required: true },
+  sub_categoryName: { type: String, required: true },
+  small_categoryNames: {
+    type: String,
+    required: true,
+  },
+  images: [
+    {
+      type: String,
+      required: true,
+    },
+  ],
+  status: {
+    type: String,
+    enum: ["active", "inactive", "archived"],
+    default: "active",
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now,
+  },
+  updatedAt: {
+    type: Date,
+    default: Date.now,
+  },
 });
 
-adsSchema.pre('save', function (next) {
-  const now = new Date();
-  if (this.startDate <= now && this.endDate >= now) {
-    this.isActive = true;
-  } else {
-    this.isActive = false;
-  }
+// Adding pre-save middleware to update the `updatedAt` field before saving
+adsImageSchema.pre("save", function (next) {
+  this.updatedAt = Date.now();
   next();
 });
 
-const AdsCenter = mongoose.model('AdsCenter', adsSchema);
-module.exports = AdsCenter;
+// Creating the model based on the updated adsImageSchema
+const AdsImage = mongoose.model("AdsImage", adsImageSchema);
+
+module.exports = AdsImage;

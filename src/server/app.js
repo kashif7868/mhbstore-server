@@ -20,7 +20,7 @@ const { smallCategoryRoutes } = require("../module/SmallCateogy/route");
 const { productsRoutes } = require("../module/Product/route"); // Add product routes here
 const { adsCenterRoutes } = require("../module/AdsCenter/route");
 const { certificateRoutes } = require("../module/Certificate/route");
-const { homeSliderRoutes } = require("../module/HomeSlider/route");
+const { BannerImageRoutes } = require("../module/HomeSlider/route");
 const { notificationRoutes } = require("../module/Notification/route");
 const { partnershipRoutes } = require("../module/Partnership/route");
 
@@ -98,7 +98,7 @@ app.use("/api/ads", adsCenterRoutes);
 app.use("/api/certificates", certificateRoutes);
 
 // Home Slider Routes
-app.use("/api/homeslider", homeSliderRoutes);
+app.use("/api/banners", BannerImageRoutes);
 
 // Notification Routes
 app.use("/api/notifications", notificationRoutes);

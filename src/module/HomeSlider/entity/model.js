@@ -1,11 +1,32 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
-const sliderImageSchema = new mongoose.Schema({
-  image: { type: String, required: true }, // Image URL or filename
-  altText: { type: String, required: true }, // Alt text for accessibility
-  createdAt: { type: Date, default: Date.now } // Created timestamp
+const bannerImageSchema = new mongoose.Schema({
+  images: [
+    {
+      type: String,
+      required: true,
+    },
+  ],
+  status: {
+    type: String,
+    enum: ["active", "inactive", "archived"],
+    default: "active",
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now,
+  },
+  updatedAt: {
+    type: Date,
+    default: Date.now,
+  },
 });
 
-const SliderImage = mongoose.model('SliderImage', sliderImageSchema);
+bannerImageSchema.pre("save", function (next) {
+  this.updatedAt = Date.now();
+  next();
+});
 
-module.exports = SliderImage;
+const BannerImage = mongoose.model("BannerImage", bannerImageSchema);
+
+module.exports = BannerImage; // Exporting the model

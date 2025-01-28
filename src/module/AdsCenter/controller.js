@@ -1,60 +1,107 @@
-const AdsCenterService = require('./service');
+const path = require("path");
+const AdsImageService = require("./service"); // Import the AdsImage service
 
-exports.createAd = async (req, res) => {
+// Create a new ad image
+const createAdImage = async (req, res) => {
   try {
-    const { image, link, startDate, endDate, status } = req.body;
-    const ad = await AdsCenterService.createAd(image, link, startDate, endDate, status);
-    res.status(201).json({ success: true, ad });
-  } catch (error) {
-    res.status(400).json({ success: false, message: error.message });
+    const { categoryName, sub_categoryName, small_categoryNames, status } = req.body;
+    const images = req.files.map(file => path.join("uploads", file.filename)); // Process the uploaded files
+
+    const adImageData = { categoryName, sub_categoryName, small_categoryNames, status, images };
+
+    const newAdImage = await AdsImageService.createAdImage(adImageData);
+
+    return res.status(201).json({
+      message: "Ad image created successfully",
+      adImage: newAdImage,
+    });
+  } catch (err) {
+    return res.status(500).json({
+      message: "Error creating ad image",
+      error: err.message,
+    });
   }
 };
 
-exports.getAllAds = async (req, res) => {
+// Update an existing ad image by ID
+const updateAdImage = async (req, res) => {
   try {
-    const ads = await AdsCenterService.getAllAds();
-    res.status(200).json({ success: true, ads });
-  } catch (error) {
-    res.status(400).json({ success: false, message: error.message });
-  }
-};
+    const { adImageId } = req.params;
+    const { categoryName, sub_categoryName, small_categoryNames, status } = req.body;
 
-exports.getAdById = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const ad = await AdsCenterService.getAdById(id);
-    if (!ad) {
-      return res.status(404).json({ success: false, message: 'Ad not found' });
+    // Handle image update if new files are provided
+    let images = [];
+    if (req.files) {
+      images = req.files.map(file => path.join("uploads", file.filename)); // Update images with new uploads
     }
-    res.status(200).json({ success: true, ad });
-  } catch (error) {
-    res.status(400).json({ success: false, message: error.message });
+
+    const updateData = { categoryName, sub_categoryName, small_categoryNames, status, images };
+
+    const updatedAdImage = await AdsImageService.updateAdImage(adImageId, updateData);
+
+    return res.status(200).json({
+      message: "Ad image updated successfully",
+      adImage: updatedAdImage,
+    });
+  } catch (err) {
+    return res.status(500).json({
+      message: "Error updating ad image",
+      error: err.message,
+    });
   }
 };
 
-exports.updateAd = async (req, res) => {
+// Get all ad images
+const getAllAdImages = async (req, res) => {
   try {
-    const { id } = req.params;
-    const updatedData = req.body;
-    const updatedAd = await AdsCenterService.updateAd(id, updatedData);
-    if (!updatedAd) {
-      return res.status(404).json({ success: false, message: 'Ad not found' });
-    }
-    res.status(200).json({ success: true, ad: updatedAd });
-  } catch (error) {
-    res.status(400).json({ success: false, message: error.message });
+    const adImages = await AdsImageService.getAllAdImages();
+    return res.status(200).json({
+      adImages,
+    });
+  } catch (err) {
+    return res.status(500).json({
+      message: "Error fetching ad images",
+      error: err.message,
+    });
   }
 };
 
-exports.deleteAd = async (req, res) => {
+// Get a single ad image by ID
+const getAdImageById = async (req, res) => {
   try {
-    const { id } = req.params;
-    const deletedAd = await AdsCenterService.deleteAd(id);
-    if (!deletedAd) {
-      return res.status(404).json({ success: false, message: 'Ad not found' });
-    }
-    res.status(200).json({ success: true, message: 'Ad deleted successfully' });
-  } catch (error) {
-    res.status(400).json({ success: false, message: error.message });
+    const { adImageId } = req.params;
+    const adImage = await AdsImageService.getAdImageById(adImageId);
+    return res.status(200).json({
+      adImage,
+    });
+  } catch (err) {
+    return res.status(500).json({
+      message: "Error fetching ad image",
+      error: err.message,
+    });
   }
+};
+
+// Delete an ad image by ID
+const deleteAdImage = async (req, res) => {
+  try {
+    const { adImageId } = req.params;
+    await AdsImageService.deleteAdImage(adImageId);
+    return res.status(200).json({
+      message: "Ad image deleted successfully",
+    });
+  } catch (err) {
+    return res.status(500).json({
+      message: "Error deleting ad image",
+      error: err.message,
+    });
+  }
+};
+
+module.exports = {
+  createAdImage,
+  updateAdImage,
+  getAllAdImages,
+  getAdImageById,
+  deleteAdImage,
 };

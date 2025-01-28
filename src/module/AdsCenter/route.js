@@ -1,30 +1,38 @@
-const express = require('express');
-const router = express.Router();
+const express = require("express");
 const validate = require("../../middlewares/validate");
-const { createAdValidation, updateAdValidation } = require("./validation");
-const adsController = require("./controller");
-const { fileUpload } = require('../../utils/fileUpload');
+const controller = require("./controller");
+const validation = require("./validation");
+const { fileUpload } = require("../../utils/fileUpload");
 
-// Route for creating a new ad (POST)
+const router = express.Router();
+
+// Route for creating and fetching all ad images
 router
   .route("/")
   .post(
-    fileUpload.single("image"),  // Handle file upload before validation
-    validate(createAdValidation),  // Validation middleware after file upload
-    adsController.createAd       // Controller to handle the request
+    fileUpload.array("images"), // Handles file upload with 'images' as the field name
+    validate(validation.createAdImageValidation), // Validate the request body for ad image creation
+    controller.createAdImage // Controller to create the ad image
   )
-  .get(adsController.getAllAds);    // Route to get all active ads (GET)
+  .get(controller.getAllAdImages); // Controller to fetch all ad images
 
-// Route for getting, updating, and deleting an ad by ID (GET, PATCH, DELETE)
+// Route for getting, updating, and deleting an ad image by ID
 router
-  .route("/:id")
-  .get(adsController.getAdById)   // Get ad by ID
-  .patch(
-    fileUpload.single("image"),  // Handle file upload before validation (optional for update)
-    validate(updateAdValidation), // Validation middleware after file upload
-    adsController.updateAd       // Controller to update ad
+  .route("/:adImageId") // Use 'adImageId' to identify the ad image
+  .get(
+    validate(validation.getAdImageValidation), // Validate the request parameters for getting an ad image
+    controller.getAdImageById // Controller to fetch a single ad image by ID
   )
-  .delete(adsController.deleteAd); // Delete ad by ID
+  .patch(
+    fileUpload.array("images"), // Handles file upload for ad image update (supports multiple files)
+    validate(validation.updateAdImageValidation), // Validate the update request body
+    controller.updateAdImage // Controller to update the ad image
+  )
+  .delete(
+    validate(validation.deleteAdImageValidation), // Validate the delete request
+    controller.deleteAdImage // Controller to delete the ad image
+  );
 
-// If you want to export the router, this export structure should work:
-module.exports.adsCenterRoutes = router;
+module.exports = {
+  adsCenterRoutes: router, // Export the routes for use in other parts of the application
+};

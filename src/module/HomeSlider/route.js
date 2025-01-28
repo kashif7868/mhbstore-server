@@ -6,33 +6,33 @@ const { fileUpload } = require("../../utils/fileUpload");
 
 const router = express.Router();
 
-// Route for creating and fetching all slider images
+// Route for creating and fetching all banners
 router
   .route("/")
   .post(
-    fileUpload.single("image"), // Handles file upload with 'image' as the field name
-    validate(validation.createSliderImage), // Validate the request body for image creation
-    controller.createSliderImage // Controller to create the slider image
+    fileUpload.array("images"), // Handles file upload with 'image' as the field name
+    validate(validation.createBannerValidation), // Validate the request body for banner creation
+    controller.createBanner // Controller to create the banner
   )
-  .get(controller.getAllSliderImages); // Controller to fetch all slider images
+  .get(controller.getAllBanner); // Controller to fetch all banners
 
-// Route for getting, updating, and deleting a slider image by ID
+// Route for getting, updating, and deleting a banner by ID
 router
-  .route("/:sliderId") // Use 'sliderId' to identify the image
+  .route("/:bannerId") // Use 'bannerId' to identify the banner
   .get(
-    validate(validation.getSliderImage), // Validate the request parameters for getting an image
-    controller.getSliderImageById // Controller to fetch a single slider image by ID
+    validate(validation.getBannerValidation), // Validate the request parameters for getting a banner
+    controller.getBannerById // Controller to fetch a single banner by ID
   )
   .patch(
-    fileUpload.single("image"), // Handle file upload for image update
-    validate(validation.updateSliderImage), // Validate the update request body
-    controller.updateSliderImage // Controller to update the slider image
+    fileUpload.array("images"), // Handles file upload for banner update (supports multiple files)
+    validate(validation.updateBannerValidation), // Validate the update request body
+    controller.updateBanner // Controller to update the banner
   )
   .delete(
-    validate(validation.deleteSliderImage), // Validate the delete request
-    controller.deleteSliderImage // Controller to delete the slider image
+    validate(validation.deleteBannerValidation), // Validate the delete request
+    controller.deleteBanner // Controller to delete the banner
   );
 
 module.exports = {
-  homeSliderRoutes: router, // Export the routes for use in other parts of the application
+  BannerImageRoutes: router, // Export the routes for use in other parts of the application
 };
